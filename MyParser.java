@@ -33,6 +33,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
@@ -40,10 +42,12 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.ErrorHandler;
 
 
-class MyParserSkeleton {
+class MyParser {
 
     // Any separator will do, but we recommend you do not use '|'
     static final String columnSeparator = "<>";
+
+	static final String DIRECTORY_NAME = "sql_data";
 
     static DocumentBuilder builder;
 
@@ -195,13 +199,43 @@ class MyParserSkeleton {
         // Get the root of the tree
         Element root = doc.getDocumentElement();
 
-        /* 
-         * ##########
-         * TODO: Here you will process xmlFile
-         * ##########
-         */
-
+		File dir = new File("./" + DIRECTORY_NAME);
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+		try {
+			dir = new File("./" + DIRECTORY_NAME);
+			if (!dir.exists()) {
+				throw new IOException("Could not make dir: " + dir);
+			}
+		}
+		catch (IOException e) {
+			System.err.println("Error: " + e.getMessage());
+		}
+		
+		outputSellerData(root);
     }
+	
+	public static void outputSellerData(Element root) {
+		File sellerFile = new File("./" + DIRECTORY_NAME + "/seller.dat");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(sellerFile));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+
+			
+		NodeList sellerNodes = root.getElementsByTagName("Seller");
+		for (int i = 0; i < sellerNodes.getLength(); i++) {
+			String sellerID = sellerNodes.item(i).getAttributes().item(0).getNodeValue();
+			String rating = sellerNodes.item(i).getAttributes().item(1).getNodeValue();
+			pw.println(sellerID + columnSeparator + rating);
+		}
+			
+		pw.close();
+	}
 
     public static void main (String[] args) {
         if (args.length == 0) {
@@ -226,20 +260,13 @@ class MyParserSkeleton {
             System.exit(2);
         }
 
-        /* Process each of the files */
-        try {
-
-            /* Process all files listed on command line. */
-            for (int i = 0; i < args.length; i++) {
-                File currentFile = new File(args[i]);
-                processFile(currentFile);
-            }
-
-            // Success!
-            System.out.println("Success creating the SQL input files.");
-
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
+        /* Process all files listed on command line. */
+        for (int i = 0; i < args.length; i++) {
+            File currentFile = new File(args[i]);
+            processFile(currentFile);
         }
+
+        // Success!
+        System.out.println("Success creating the SQL input files.");
     }
 }
