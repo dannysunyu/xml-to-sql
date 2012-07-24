@@ -214,6 +214,7 @@ class MyParser {
 		}
 		
 		outputSellerData(root);
+		outputBidderData(root);
     }
 	
 	public static void outputSellerData(Element root) {
@@ -225,17 +226,39 @@ class MyParser {
 		catch (IOException e){
 			e.printStackTrace();
 		}
-
-			
+	
 		NodeList sellerNodes = root.getElementsByTagName("Seller");
 		for (int i = 0; i < sellerNodes.getLength(); i++) {
-			String sellerID = sellerNodes.item(i).getAttributes().item(0).getNodeValue();
-			String rating = sellerNodes.item(i).getAttributes().item(1).getNodeValue();
+			/* why is the order of attributes switched ? */
+			String sellerID = sellerNodes.item(i).getAttributes().item(1).getNodeValue();
+			String rating = sellerNodes.item(i).getAttributes().item(0).getNodeValue();
 			pw.println(sellerID + columnSeparator + rating);
 		}
 			
 		pw.close();
 	}
+	
+	public static void outputBidderData(Element root) {
+		File bidderFile = new File("./" + DIRECTORY_NAME + "/bidder.dat");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(bidderFile));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+	
+		NodeList bidderNodes = root.getElementsByTagName("Bidder");
+		for (int i = 0; i < bidderNodes.getLength(); i++) {
+			/* why is the order of attributes switched ? */
+			String bidderID = bidderNodes.item(i).getAttributes().item(1).getNodeValue();
+			String rating = bidderNodes.item(i).getAttributes().item(0).getNodeValue();
+			pw.println(bidderID + columnSeparator + rating);
+		}
+			
+		pw.close();
+	}
+	
 
     public static void main (String[] args) {
         if (args.length == 0) {
