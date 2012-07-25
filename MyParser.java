@@ -200,20 +200,6 @@ class MyParser {
 
         // Get the root of the tree
         Element root = doc.getDocumentElement();
-
-		File dir = new File("./" + DIRECTORY_NAME);
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
-		try {
-			dir = new File("./" + DIRECTORY_NAME);
-			if (!dir.exists()) {
-				throw new IOException("Could not make dir: " + dir);
-			}
-		}
-		catch (IOException e) {
-			System.err.println("Error: " + e.getMessage());
-		}
 		
 		outputSellerData(root);
 		outputBidderData(root);
@@ -226,7 +212,7 @@ class MyParser {
 		File sellerFile = new File("./" + DIRECTORY_NAME + "/seller.dat");
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(sellerFile));
+				pw = new PrintWriter(new FileWriter(sellerFile, true));
 		}
 		catch (IOException e){
 			e.printStackTrace();
@@ -247,7 +233,7 @@ class MyParser {
 		File bidderFile = new File("./" + DIRECTORY_NAME + "/bidder.dat");
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(bidderFile));
+			pw = new PrintWriter(new FileWriter(bidderFile, true));
 		}
 		catch (IOException e){
 			e.printStackTrace();
@@ -289,7 +275,7 @@ class MyParser {
 		File bidFile = new File("./" + DIRECTORY_NAME + "/bid.dat");
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(bidFile));
+			pw = new PrintWriter(new FileWriter(bidFile, true));
 		}
 		catch (IOException e){
 			e.printStackTrace();
@@ -321,7 +307,7 @@ class MyParser {
 		File categoryFile = new File("./" + DIRECTORY_NAME + "/category.dat");
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(categoryFile));
+			pw = new PrintWriter(new FileWriter(categoryFile, true));
 		}
 		catch (IOException e){
 			e.printStackTrace();
@@ -345,7 +331,7 @@ class MyParser {
 		File itemFile = new File("./" + DIRECTORY_NAME + "/item.dat");
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(itemFile));
+			pw = new PrintWriter(new FileWriter(itemFile, true));
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -426,6 +412,19 @@ String country = itemElement.getElementsByTagName("Country").item(0).getFirstChi
             System.out.println("parser was unable to be configured");
             System.exit(2);
         }
+
+		File dir = new File("./" + DIRECTORY_NAME);
+		if (!dir.exists())
+			dir.mkdir();
+		try {
+			dir = new File("./" + DIRECTORY_NAME);
+			if (!dir.exists()) {
+				throw new IOException("Could not make dir: " + dir);
+			}
+		}
+		catch (IOException e) {
+			System.err.println("Error: " + e.getMessage());
+		}
 
         /* Process all files listed on command line. */
         for (int i = 0; i < args.length; i++) {
