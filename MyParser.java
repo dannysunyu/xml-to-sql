@@ -254,9 +254,30 @@ class MyParser {
 		NodeList bidderNodes = root.getElementsByTagName("Bidder");
 		for (int i = 0; i < bidderNodes.getLength(); i++) {
 			/* why is the order of attributes switched ? */
-			String bidderID = bidderNodes.item(i).getAttributes().item(1).getNodeValue();
-			String rating = bidderNodes.item(i).getAttributes().item(0).getNodeValue();
-			pw.println(bidderID + columnSeparator + rating);
+			Element bidderElement = (Element) bidderNodes.item(i);
+			String bidderID = bidderElement.getAttributes().item(1).getNodeValue();
+			String rating = bidderElement.getAttributes().item(0).getNodeValue();
+			
+			NodeList maybeLocationNodes = bidderElement.getElementsByTagName("Location");
+			StringBuilder locationBuilder = null;
+			if (maybeLocationNodes != null && maybeLocationNodes.item(0) != null) // here I make sure the tag exists and is not empty.
+				locationBuilder = new StringBuilder(maybeLocationNodes.item(0).getFirstChild().getNodeValue());
+			else
+				locationBuilder = new StringBuilder("NULL");
+			String location = locationBuilder.toString();
+			
+			NodeList maybeCountryNodes = bidderElement.getElementsByTagName("Country");
+			StringBuilder countryBuilder = null;
+			if (maybeCountryNodes != null && maybeCountryNodes.item(0) != null) // here I make sure the tag exists and is not empty.
+				countryBuilder = new StringBuilder(maybeCountryNodes.item(0).getFirstChild().getNodeValue());
+			else
+				countryBuilder = new StringBuilder("NULL");
+			String country = countryBuilder.toString();
+			
+			pw.println(bidderID + columnSeparator + 
+				rating + columnSeparator +
+					location + columnSeparator + 
+						country);
 		}
 			
 		pw.close();
@@ -324,7 +345,7 @@ class MyParser {
 		try {
 			pw = new PrintWriter(new FileWriter(itemFile));
 		}
-		catch (IOException e){
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -334,13 +355,15 @@ class MyParser {
 			String itemID = itemElement.getAttributes().item(0).getNodeValue();
 			String name = itemElement.getElementsByTagName("Name").item(0).getFirstChild().getNodeValue();
 			String currently = itemElement.getElementsByTagName("Currently").item(0).getFirstChild().getNodeValue();
+
 			NodeList maybeBuyNodes = itemElement.getElementsByTagName("Buy_Price");
 			StringBuilder buyPriceBuilder = null;
-			if (maybeBuyNodes != null && maybeBuyNodes.item(0) != null)
+			if (maybeBuyNodes != null && maybeBuyNodes.item(0) != null) // here I make sure the tag exists and is not empty.
 				buyPriceBuilder = new StringBuilder(maybeBuyNodes.item(0).getFirstChild().getNodeValue());
 			else
 				buyPriceBuilder = new StringBuilder("NULL");
 			String buyPrice = buyPriceBuilder.toString();
+
 			String firstBid = itemElement.getElementsByTagName("First_Bid").item(0).getFirstChild().getNodeValue();
 			String numberOfBids = itemElement.getElementsByTagName("Number_of_Bids").item(0).getFirstChild().getNodeValue();
 			String location = itemElement.getElementsByTagName("Location").item(0).getFirstChild().getNodeValue();
