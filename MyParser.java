@@ -217,6 +217,7 @@ class MyParser {
 		outputBidderData(root);
 		outputBidData(root);
 		outputCategoryData(root);
+		outputItemData(root);
     }
 	
 	public static void outputSellerData(Element root) {
@@ -317,6 +318,66 @@ class MyParser {
 		pw.close();
 	}
 	
+	public static void outputItemData(Element root) {
+		File itemFile = new File("./" + DIRECTORY_NAME + "/item.dat");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(itemFile));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		
+		NodeList itemNodes = root.getElementsByTagName("Item");
+		for (int i = 0; i < itemNodes.getLength(); i++) {
+			Element itemElement = (Element) itemNodes.item(i);
+			String itemID = itemElement.getAttributes().item(0).getNodeValue();
+			String name = itemElement.getElementsByTagName("Name").item(0).getFirstChild().getNodeValue();
+			String currently = itemElement.getElementsByTagName("Currently").item(0).getFirstChild().getNodeValue();
+			NodeList maybeBuyNodes = itemElement.getElementsByTagName("Buy_Price");
+			StringBuilder buyPriceBuilder = null;
+			if (maybeBuyNodes != null && maybeBuyNodes.item(0) != null)
+				buyPriceBuilder = new StringBuilder(maybeBuyNodes.item(0).getFirstChild().getNodeValue());
+			else
+				buyPriceBuilder = new StringBuilder("NULL");
+			String buyPrice = buyPriceBuilder.toString();
+			String firstBid = itemElement.getElementsByTagName("First_Bid").item(0).getFirstChild().getNodeValue();
+			String numberOfBids = itemElement.getElementsByTagName("Number_of_Bids").item(0).getFirstChild().getNodeValue();
+			String location = itemElement.getElementsByTagName("Location").item(0).getFirstChild().getNodeValue();
+			String country = itemElement.getElementsByTagName("Country").item(0).getFirstChild().getNodeValue();
+			String started = itemElement.getElementsByTagName("Started").item(0).getFirstChild().getNodeValue();
+			String ends = itemElement.getElementsByTagName("Ends").item(0).getFirstChild().getNodeValue();
+			String sellerID = itemElement.getElementsByTagName("Seller").item(0).getAttributes().item(1).getNodeValue(); // yes, 1 not 0. 
+
+			StringBuilder b = null;
+			Node descriptionTextNode = itemElement.getElementsByTagName("Description").item(0).getFirstChild();
+			if (descriptionTextNode != null)
+				b = new StringBuilder(descriptionTextNode.getNodeValue());
+			else
+				b = new StringBuilder("");
+			String description = b.toString();
+
+			/*
+String description = itemElement.getElementsByTagName("Description").item(0).getFirstChild().getNodeValue();
+String country = itemElement.getElementsByTagName("Country").item(0).getFirstChild().getNodeValue();
+*/
+			pw.println(itemID + columnSeparator + 
+				name + columnSeparator +
+					currently + columnSeparator + 
+						buyPrice + columnSeparator + 
+							firstBid + columnSeparator +
+								numberOfBids + columnSeparator + 
+									location + columnSeparator + 
+										country + columnSeparator + 
+											started + columnSeparator + 
+												ends + columnSeparator + 
+													sellerID + columnSeparator + 
+														description);
+		}
+			
+		pw.close();
+	}
+
 
     public static void main (String[] args) {
         if (args.length == 0) {
