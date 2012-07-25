@@ -215,6 +215,7 @@ class MyParser {
 		
 		outputSellerData(root);
 		outputBidderData(root);
+		outputBidData(root);
     }
 	
 	public static void outputSellerData(Element root) {
@@ -254,6 +255,39 @@ class MyParser {
 			String bidderID = bidderNodes.item(i).getAttributes().item(1).getNodeValue();
 			String rating = bidderNodes.item(i).getAttributes().item(0).getNodeValue();
 			pw.println(bidderID + columnSeparator + rating);
+		}
+			
+		pw.close();
+	}
+	
+	public static void outputBidData(Element root) {
+		File bidFile = new File("./" + DIRECTORY_NAME + "/bid.dat");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(bidFile));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+	
+		NodeList itemNodes = root.getElementsByTagName("Item");
+		for (int i = 0; i < itemNodes.getLength(); i++) {
+			Node itemNode = itemNodes.item(i);
+			String itemID = itemNode.getAttributes().item(0).getNodeValue();
+			/* why is the order of attributes switched ? */
+			NodeList bidNodes = ((Element)itemNode).getElementsByTagName("Bid");
+			for (int j = 0; j < bidNodes.getLength(); j++) {
+				Node bidNode = bidNodes.item(j);
+				NodeList bidElements = bidNode.getChildNodes();
+				String bidderID = bidElements.item(0).getAttributes().item(1).getNodeValue();
+				Element timeNode = (Element) bidElements.item(1);
+				String time = bidElements.item(1).getFirstChild().getNodeValue();
+				String amount = ((Element)bidElements.item(2)).getFirstChild().getNodeValue();
+				pw.println(itemID + columnSeparator +
+						bidderID + columnSeparator + 
+							time + columnSeparator +
+								amount);
+			}
 		}
 			
 		pw.close();
