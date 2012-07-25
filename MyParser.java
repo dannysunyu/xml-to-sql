@@ -143,7 +143,7 @@ class MyParser {
      * string like $3,453.23. Returns the input if the input is an empty
      * string. */
     static String formatDollar(String money) {
-        if (money.equals(""))
+        if (money.equals("") || money.equals("NULL"))
             return money;
         else {
             double am = 0.0;
@@ -162,6 +162,8 @@ class MyParser {
     /* Returns the time (in YYYY-MM-DD HH:MM:SS format) denoted by a
      * time string like Dec-31-01 23:59:59. */
     static String formatTime(String time) {
+		if (time.equals("NULL"))
+			return time;
         DateFormat outputDf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         DateFormat inputDf = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
         String result = "";
@@ -303,8 +305,8 @@ class MyParser {
 				Node bidNode = bidNodes.item(j);
 				NodeList bidElements = bidNode.getChildNodes();
 				String bidderID = bidElements.item(0).getAttributes().item(1).getNodeValue();
-				String time = bidElements.item(1).getFirstChild().getNodeValue();
-				String amount = ((Element)bidElements.item(2)).getFirstChild().getNodeValue();
+				String time = formatTime(bidElements.item(1).getFirstChild().getNodeValue());
+				String amount = formatDollar(((Element)bidElements.item(2)).getFirstChild().getNodeValue());
 				pw.println(itemID + columnSeparator +
 						bidderID + columnSeparator + 
 							time + columnSeparator +
@@ -354,7 +356,7 @@ class MyParser {
 			Element itemElement = (Element) itemNodes.item(i);
 			String itemID = itemElement.getAttributes().item(0).getNodeValue();
 			String name = itemElement.getElementsByTagName("Name").item(0).getFirstChild().getNodeValue();
-			String currently = itemElement.getElementsByTagName("Currently").item(0).getFirstChild().getNodeValue();
+			String currently = formatDollar(itemElement.getElementsByTagName("Currently").item(0).getFirstChild().getNodeValue());
 
 			NodeList maybeBuyNodes = itemElement.getElementsByTagName("Buy_Price");
 			StringBuilder buyPriceBuilder = null;
@@ -362,14 +364,14 @@ class MyParser {
 				buyPriceBuilder = new StringBuilder(maybeBuyNodes.item(0).getFirstChild().getNodeValue());
 			else
 				buyPriceBuilder = new StringBuilder("NULL");
-			String buyPrice = buyPriceBuilder.toString();
+			String buyPrice = formatDollar(buyPriceBuilder.toString());
 
-			String firstBid = itemElement.getElementsByTagName("First_Bid").item(0).getFirstChild().getNodeValue();
+			String firstBid = formatDollar(itemElement.getElementsByTagName("First_Bid").item(0).getFirstChild().getNodeValue());
 			String numberOfBids = itemElement.getElementsByTagName("Number_of_Bids").item(0).getFirstChild().getNodeValue();
 			String location = itemElement.getElementsByTagName("Location").item(0).getFirstChild().getNodeValue();
 			String country = itemElement.getElementsByTagName("Country").item(0).getFirstChild().getNodeValue();
-			String started = itemElement.getElementsByTagName("Started").item(0).getFirstChild().getNodeValue();
-			String ends = itemElement.getElementsByTagName("Ends").item(0).getFirstChild().getNodeValue();
+			String started = formatTime(itemElement.getElementsByTagName("Started").item(0).getFirstChild().getNodeValue());
+			String ends = formatTime(itemElement.getElementsByTagName("Ends").item(0).getFirstChild().getNodeValue());
 			String sellerID = itemElement.getElementsByTagName("Seller").item(0).getAttributes().item(1).getNodeValue(); // yes, 1 not 0. 
 
 			StringBuilder b = null;
