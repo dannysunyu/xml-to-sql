@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -rf sql_data
+make
+java MyParser ./ebay_data/items-*.xml
+#java MyParser /usr/class/cs145/project/ebay_data/items-*.xml
+
