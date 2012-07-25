@@ -3,5 +3,13 @@
 rm -rf sql_data
 make
 java MyParser ./ebay_data/items-*.xml
+
+for f in sql_data/*.dat
+do
+   cp $f /tmp/tmp.dat
+   sort --output=/tmp/tmp.dat /tmp/tmp.dat
+   uniq /tmp/tmp.dat > $f
+done
+
 #java MyParser /usr/class/cs145/project/ebay_data/items-*.xml
 
