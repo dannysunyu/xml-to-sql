@@ -216,6 +216,7 @@ class MyParser {
 		outputSellerData(root);
 		outputBidderData(root);
 		outputBidData(root);
+		outputCategoryData(root);
     }
 	
 	public static void outputSellerData(Element root) {
@@ -280,13 +281,36 @@ class MyParser {
 				Node bidNode = bidNodes.item(j);
 				NodeList bidElements = bidNode.getChildNodes();
 				String bidderID = bidElements.item(0).getAttributes().item(1).getNodeValue();
-				Element timeNode = (Element) bidElements.item(1);
 				String time = bidElements.item(1).getFirstChild().getNodeValue();
 				String amount = ((Element)bidElements.item(2)).getFirstChild().getNodeValue();
 				pw.println(itemID + columnSeparator +
 						bidderID + columnSeparator + 
 							time + columnSeparator +
 								amount);
+			}
+		}
+			
+		pw.close();
+	}
+	
+	public static void outputCategoryData(Element root) {
+		File categoryFile = new File("./" + DIRECTORY_NAME + "/category.dat");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(categoryFile));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+	
+		NodeList itemNodes = root.getElementsByTagName("Item");
+		for (int i = 0; i < itemNodes.getLength(); i++) {
+			Node itemNode = itemNodes.item(i);
+			String itemID = itemNode.getAttributes().item(0).getNodeValue();
+			NodeList categoryNodes = ((Element)itemNode).getElementsByTagName("Category");
+			for (int j = 0; j < categoryNodes.getLength(); j++) {
+				String category = categoryNodes.item(j).getFirstChild().getNodeValue();
+				pw.println(itemID + columnSeparator + category);
 			}
 		}
 			
