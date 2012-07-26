@@ -354,7 +354,7 @@ class MyParser {
 
 			String firstBid = formatDollar(itemElement.getElementsByTagName("First_Bid").item(0).getFirstChild().getNodeValue());
 			String numberOfBids = itemElement.getElementsByTagName("Number_of_Bids").item(0).getFirstChild().getNodeValue();
-			String location = itemElement.getElementsByTagName("Location").item(0).getFirstChild().getNodeValue();
+			String location = getElementsByTagNameNR(itemElement, "Location")[0].getFirstChild().getNodeValue();
 			String country = itemElement.getElementsByTagName("Country").item(0).getFirstChild().getNodeValue();
 			String started = formatTime(itemElement.getElementsByTagName("Started").item(0).getFirstChild().getNodeValue());
 			String ends = formatTime(itemElement.getElementsByTagName("Ends").item(0).getFirstChild().getNodeValue());
